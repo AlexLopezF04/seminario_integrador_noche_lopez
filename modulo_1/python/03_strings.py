@@ -15,7 +15,8 @@ nombre_edad = f"Nombre: {nombre}, {edad}"
 print(nombre_edad)
 print(f"Nombre: {nombre}, {edad}")
 print(f"Doble de {edad} es {edad*2}")
-print(f"{'Maria': >15}") # Alineado a la derecha
+
+print(f"{'Maria': >15}")              # Alineado a la derecha
 
 pi = 3.14159
 print(f"{pi:.2f}")

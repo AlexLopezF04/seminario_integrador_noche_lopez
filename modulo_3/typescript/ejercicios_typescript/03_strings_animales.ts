@@ -1,7 +1,7 @@
 // tipos-string.ts
 const nombre:    string = "Pinpon";
 const raza:    string = `Comun`;
-const raza:    string = `Es de raza ${raza}`;
+const descripcion:    string = `Es de raza ${raza}`;
 const color:     string = "Cafe";
 const dueño:  string = 'Alex López';
 

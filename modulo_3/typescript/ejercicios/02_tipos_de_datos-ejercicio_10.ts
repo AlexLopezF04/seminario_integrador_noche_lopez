@@ -1,38 +1,33 @@
 /**
- * ============================================
- * EJERCICIO 10: Figuras con narrowing
- * ============================================
- * Tema: Type Narrowing
- *
- * Enunciado:
- * Define type Figura = { tipo: "circulo"; radio: number }
- * | { tipo: "rectangulo"; base: number; altura: number }.
- * Declara const figuras: Figura[] con un circulo de radio 7
- * y un rectangulo de 10x5. Recorre con for...of y usa switch
- * sobre tipo para calcular e imprimir el area de cada figura.
- * ============================================
+ * Ejercicio: Type narrowing completo
+ * unknown con typeof + discriminated union con switch.
  */
 
-type Figura =
-  | { tipo: "circulo"; radio: number }
-  | { tipo: "rectangulo"; base: number; altura: number };
+// typeof narrowing
+function procesarUnknown(valor: unknown): void {
+  if (typeof valor === "number") console.log("Numero:", valor);
+  else if (typeof valor === "string") console.log("Texto de", valor.length, "caracteres:", valor);
+  else if (typeof valor === "boolean") console.log("Booleano:", valor);
+  else console.log("Tipo desconocido:", typeof valor);
+}
+procesarUnknown(42);
+procesarUnknown("hola");
+procesarUnknown(true);
+procesarUnknown(null);
 
-const figuras: Figura[] = [
-  { tipo: "circulo", radio: 7 },
-  { tipo: "rectangulo", base: 10, altura: 5 },
-];
+// Discriminated union + switch
+type PagoTarjeta = { metodo: "tarjeta"; ultimos4: string; marca: "visa" | "mastercard" };
+type PagoTransferencia = { metodo: "transferencia"; banco: string; referencia: string };
+type PagoEfectivo = { metodo: "efectivo"; cambioRequerido: number };
+type MedioPago = PagoTarjeta | PagoTransferencia | PagoEfectivo;
 
-for (const f of figuras) {
-  switch (f.tipo) {
-    case "circulo": {
-      const area = Math.PI * f.radio ** 2;
-      console.log("Circulo (radio=" + f.radio + "): area =", area.toFixed(2));
-      break;
-    }
-    case "rectangulo": {
-      const area = f.base * f.altura;
-      console.log("Rectangulo (" + f.base + "x" + f.altura + "): area =", area.toFixed(2));
-      break;
-    }
+function confirmarPago(m: MedioPago): string {
+  switch (m.metodo) {
+    case "tarjeta": return "Pago tarjeta " + m.marca + " ****" + m.ultimos4;
+    case "transferencia": return "Transferencia " + m.banco + " ref: " + m.referencia;
+    case "efectivo": return "Efectivo, cambio: $" + m.cambioRequerido;
   }
 }
+console.log(confirmarPago({ metodo: "tarjeta", ultimos4: "1234", marca: "visa" }));
+console.log(confirmarPago({ metodo: "transferencia", banco: "BBVA", referencia: "REF-001" }));
+console.log(confirmarPago({ metodo: "efectivo", cambioRequerido: 50 }));

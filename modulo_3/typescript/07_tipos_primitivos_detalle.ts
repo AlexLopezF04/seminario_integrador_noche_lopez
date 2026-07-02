@@ -1,108 +1,100 @@
 /**
- * ============================================
  * 07 - TIPOS PRIMITIVOS (DETALLE)
- * ============================================
- * Temas:
- *   - number: enteros, decimales, hex, binario, octal
- *   - string: comillas, metodos, template literals
- *   - boolean: truthy/falsy, comparacion estricta
- *   - null y undefined, ?? y ?.
- * ============================================
+ * number, string, boolean, null/undefined, ?? y ?.
  */
 
 // ──────────────────────────────────────────────
-// A.1: number
+// REFERENCIA RAPIDA (antes 03_tipos_primitivos)
 // ──────────────────────────────────────────────
 
-// TypeScript usa un unico tipo number para todos los numeros
-// (no hay int ni float separados como en otros lenguajes).
+// number: enteros, decimales, negativos, hex
+const precioNum: number = 299.99;
+const puertoNum: number = 8080;
+const hexColor: number = 0xff5733;
+
+// string: comillas simples, dobles o backtick
+const emailStr: string = "soporte@empresa.com";
+const rutaStr: string = `/api/v2/usuarios`;
+
+// boolean: solo true o false
+const activoBool: boolean = true;
+const requiereAuth: boolean = false;
+
+// Operaciones tipicas
+const subtotal = 1500;
+const descuento = 150;
+const total = subtotal - descuento;
+
+// Los tres usan type inference al asignar un literal
+
+// ──────────────────────────────────────────────
+// number (detalle)
+// ──────────────────────────────────────────────
 
 const entero: number = 42;
 const decimal: number = 3.14;
 const negativo: number = -100;
-const hexadecimal: number = 0xff;    // 255 en base 16
-const binario: number = 0b1010;      // 10 en base 2
-const octal: number = 0o17;          // 15 en base 8
-const grande: number = 1_000_000; // _ como separador visual (ES2021)
+const hexadecimal: number = 0xff;
+const binario: number = 0b1010;
+const octal: number = 0o17;
+const grande: number = 1_000_000;
 
-console.log("hexadecimal:", hexadecimal); // 255
-console.log("binario:", binario);         // 10
-console.log("grande:", grande);           // 1000000
+console.log("hex:", hexadecimal, "bin:", binario, "grande:", grande);
 
-// Constantes especiales de number
-console.log("MAX_SAFE_INTEGER:", Number.MAX_SAFE_INTEGER); // 9007199254740991
-console.log("isFinite(1/0):", Number.isFinite(1 / 0));     // false (Infinity)
-console.log("isNaN(0/0):", Number.isNaN(0 / 0));           // true
+console.log("MAX_SAFE_INTEGER:", Number.MAX_SAFE_INTEGER);
+console.log("isFinite(1/0):", Number.isFinite(1 / 0));
+console.log("isNaN(0/0):", Number.isNaN(0 / 0));
 
 // ──────────────────────────────────────────────
-// A.2: string
+// string (detalle)
 // ──────────────────────────────────────────────
 
-const simple: string = "Hola TypeScript";
-const doble: string = 'Tambien funciona';
+const simple: string = "Hola";
+const doble: string = 'Tambien';
 const template: string = `Hola ${"mundo"}`;
+const saludo: string = `Hola, ${"Ana"}. Tiene ${28} anios.`;
+const mayor: string = `Es ${28 >= 18 ? "mayor" : "menor"} de edad.`;
 
-const nombre: string = "Ana";
-const edad: number = 28;
-
-const saludo: string = `Hola, ${nombre}. Tienes ${edad} anios.`;
-const mayoria: string = `Eres ${edad >= 18 ? "mayor" : "menor"} de edad.`;
-
-// Multilinea sin caracteres de escape
-const mensaje: string = `
+const multilinea: string = `
   Linea 1
   Linea 2
   Linea 3
 `.trim();
 
-// Metodos comunes (tipados, el editor autocompleta)
-console.log("  hola  ".trim());             // "hola"
-console.log("hola".toUpperCase());          // "HOLA"
-console.log("2024-06-15".split("-"));       // ["2024", "06", "15"]
-console.log("error: fallo".includes("error")); // true
-console.log("archivo.ts".endsWith(".ts"));  // true
+console.log("  hola  ".trim());
+console.log("hola".toUpperCase());
+console.log("2024-06-15".split("-"));
+console.log("error: fallo".includes("error"));
+console.log("archivo.ts".endsWith(".ts"));
 
 // ──────────────────────────────────────────────
-// A.3: boolean
+// boolean (detalle)
 // ──────────────────────────────────────────────
 
 const activo: boolean = true;
 const eliminado: boolean = false;
+const esMayor = 25 >= 18;
+const tieneStock = 0 > 0;
 
-// Se infiere sin anotacion explicita
-const esMayor = 25 >= 18;    // boolean inferido -> true
-const tieneStock = 0 > 0;    // boolean inferido -> false
+// Valores "falsy": false, 0, "", null, undefined, NaN
+if (!tieneStock) console.log("Sin stock");
 
-// Valores "falsy" en JS: false, 0, "", null, undefined, NaN
-// Todos se comportan como false en un if
-if (!tieneStock) {
-  console.log("Sin stock disponible");
-}
-
-// Usa === (igualdad estricta), NO ==
-// Con ==, 0 == false es true; con === es false
+// Usa ===, no == (0 == false es true, pero 0 === false es false)
 
 // ──────────────────────────────────────────────
-// A.4: null y undefined
+// null y undefined
 // ──────────────────────────────────────────────
-
-/**
- * undefined: la variable existe pero no tiene valor asignado.
- * null: asignacion intencional de "sin valor".
- * TypeScript los distingue como tipos diferentes.
- */
 
 let sinAsignar: undefined = undefined;
 let sinValor: null = null;
 
-// En la practica: busqueda que puede no encontrar nada
 const idBuscado: number = 5;
 const usuarioEncontrado: string | null = idBuscado === 1 ? "Ana" : null;
 
-// Operador ?? (coalescencia nula): usa el lado derecho si el izquierdo es null/undefined
+// ?? (coalescencia nula): usa el derecho si izquierdo es null/undefined
 const nom: string = usuarioEncontrado ?? "Invitado";
-console.log("nom:", nom); // "Invitado"
+console.log("nom:", nom);
 
-// Encadenamiento opcional ?.: no lanza error si es null/undefined
+// ?. (encadenamiento opcional): no lanza error si es null/undefined
 const longitud: number | undefined = usuarioEncontrado?.length;
-console.log("longitud:", longitud); // undefined (no lanza error)
+console.log("longitud:", longitud);

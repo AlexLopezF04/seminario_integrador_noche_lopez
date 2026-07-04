@@ -1,0 +1,13 @@
+{
+  "name": "typescript-fundamentos",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Fundamentos de TypeScript - Tutorial del profesor Francisco Higuera",
+  "scripts": {
+    "dev": "npx tsx"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0"
+  }
+}

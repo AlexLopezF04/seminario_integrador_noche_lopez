@@ -1,7 +1,13 @@
 // src/App.tsx
 
+import FruitList from './components/FruitList'
 import UserGreeting from './components/UserGreeting'
 import WelcomeBanner from './components/WelcomeBanner'
+import DigitalCounter from './useState/DigitalCounter'
+import UserProfileForm from './useState/UserProfileForm'
+import TaskManager from './useState/TaskManager'
+import DocumentTitle from './useEffect/DocumentTitle'
+import FetchUser from './useEffect/FetchUser'
 
 
 // ┌──────────────────────────────────────────────────────────────────────────┐
@@ -19,8 +25,13 @@ import WelcomeBanner from './components/WelcomeBanner'
 // │  11  ProductCard         — interfaz de props con opcionales y booleanas │
 // │  12  ProductCatalogList  — lista con renderizado condicional de items   │
 // │  13  UserProfileCard     — ejercicio: props complejas + rol             │
+// │  14  UserProfileForm     — formulario con useState                      │
+// │  15  DigitalCounter      — contador con useState                        │
+// │  16  TaskManager         — CRUD de tareas con useState                  │
+// │  17  DocumentTitle       — useEffect: título dinámico de pestaña        │
+// │  18  FetchUser           — useEffect: fetch con loading/error           │
 // └──────────────────────────────────────────────────────────────────────────┘
-const PASO = 2
+const PASO = 18
 
 const fruits = [
   { name: 'Manzana', emoji: '🍎', calories: 52 },
@@ -36,7 +47,7 @@ const catalog = [
 ]
 
 export default function App() {
-  const content =
+  const content = /*
     PASO ===  1 ? <WelcomeBanner /> :
     PASO ===  2 ? <>
       <UserGreeting 
@@ -53,7 +64,7 @@ export default function App() {
         name="Ana Maria Guerrero" 
         occupation="Estudiante de Odontología - UTE"
         color='#2111b2'/>
-      </> : /*
+      </> : 
     PASO ===  3 ? <CurrentDateDisplay /> :
     PASO ===  4 ? (
       <div style={{ display: 'flex', gap: 12 }}>
@@ -62,8 +73,8 @@ export default function App() {
         <ColoredBox color="#e00"    label="Danger" />
       </div>
     ) :
-    PASO ===  5 ? <ConditionalGreeting isLoggedIn={true} userName="Ana" timeOfDay="afternoon" /> :
-    PASO ===  6 ? <FruitList fruits={fruits} title="Frutas favoritas" /> :
+    PASO ===  5 ? <ConditionalGreeting isLoggedIn={true} userName="Ana" timeOfDay="afternoon" /> : 
+    PASO ===  6 ? <FruitList fruits={fruits} title="Frutas favoritas" /> : 
     PASO ===  7 ? (
       <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end' }}>
         <PriceTag amount={99.99} currency="USD" />
@@ -108,8 +119,25 @@ export default function App() {
         skills={['TypeScript', 'React', 'Node.js']}
         bio="Desarrolladora fullstack con 5 años de experiencia."
       />
-    ) :*/
+    ) : */
+
+    // Hooks: useState
+    PASO === 14 ? <UserProfileForm /> :
+    PASO === 15 ? <DigitalCounter initialValue={5} step={1} label="Contador de Servidores"/> :
+    PASO === 16 ? <TaskManager /> :
+
+    // Hooks: useEffect 30
+    PASO === 17 ? <DocumentTitle initialTitle="Documentos - React" /> :
+    PASO === 18 ? <FetchUser defaultUserId={3} /> :
+
+    // Hooks: useRef
+    // Hooks: useReducer
+    // Hooks: useContext
+    // Hooks: useMemo
+    // Hooks: useCallback
+
     <p style={{ color: '#e00' }}>Paso {PASO}: crea el componente primero</p>
+
 
   return (
     <main style={{ maxWidth: 540, margin: '40px auto', fontFamily: 'sans-serif', padding: '0 16px' }}>

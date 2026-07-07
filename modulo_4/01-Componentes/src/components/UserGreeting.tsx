@@ -3,9 +3,10 @@
 interface UserGreetingProps {
   name: string
   occupation?: string
+  color?: string
 }
 
-export default function UserGreeting({ name, occupation }: UserGreetingProps) {
+export default function UserGreeting({ name, occupation, color }: UserGreetingProps) {
   const initials = name
     .split(' ')
     .map((w) => w[0])
@@ -19,7 +20,7 @@ export default function UserGreeting({ name, occupation }: UserGreetingProps) {
           width: 44,
           height: 44,
           borderRadius: '50%',
-          background: '#00ff00',
+          background: color ?? '#6366f1',
           color: '#fff',
           display: 'flex',
           alignItems: 'center',

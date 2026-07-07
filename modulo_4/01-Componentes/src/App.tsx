@@ -1,13 +1,19 @@
 // src/App.tsx
+// ┌──────────────────────────────────────────────────────────────────────────┐
+// │  Descomenta el import del componente cuando trabajes en ese paso.       │
+// └──────────────────────────────────────────────────────────────────────────┘
 
-import FruitList from './components/FruitList'
-import UserGreeting from './components/UserGreeting'
-import WelcomeBanner from './components/WelcomeBanner'
-import DigitalCounter from './useState/DigitalCounter'
+// PASO  1-13  — descomenta cuando trabajes en ese paso
+// import WelcomeBanner   from './components/WelcomeBanner'
+// import UserGreeting    from './components/UserGreeting'
+// import FruitList       from './components/FruitList'
+
+// PASO 14+   — siempre activos
+import DigitalCounter  from './useState/DigitalCounter'
 import UserProfileForm from './useState/UserProfileForm'
-import TaskManager from './useState/TaskManager'
-import DocumentTitle from './useEffect/DocumentTitle'
-import FetchUser from './useEffect/FetchUser'
+import TaskManager     from './useState/TaskManager'
+import DocumentTitle   from './useEffect/DocumentTitle'
+import FetchUser       from './useEffect/FetchUser'
 
 
 // ┌──────────────────────────────────────────────────────────────────────────┐
@@ -31,20 +37,21 @@ import FetchUser from './useEffect/FetchUser'
 // │  17  DocumentTitle       — useEffect: título dinámico de pestaña        │
 // │  18  FetchUser           — useEffect: fetch con loading/error           │
 // └──────────────────────────────────────────────────────────────────────────┘
-const PASO = 18
+// PASO 1-13 — descomenta estos datos cuando trabajes en esos pasos
+// const fruits = [
+//   { name: 'Manzana', emoji: '🍎', calories: 52 },
+//   { name: 'Banana',  emoji: '🍌', calories: 89 },
+//   { name: 'Naranja', emoji: '🍊', calories: 47 },
+// ]
+//
+// const catalog = [
+//   { id: 1, name: 'Teclado mecánico',  price: 89.99 },
+//   { id: 2, name: 'Monitor 27 pulgadas', price: 349.99 },
+//   { id: 3, name: 'Mouse inalámbrico', price: 29.99, outOfStock: true },
+//   { id: 4, name: 'Webcam HD',         price: 59.99 },
+// ]
 
-const fruits = [
-  { name: 'Manzana', emoji: '🍎', calories: 52 },
-  { name: 'Banana',  emoji: '🍌', calories: 89 },
-  { name: 'Naranja', emoji: '🍊', calories: 47 },
-]
-
-const catalog = [
-  { id: 1, name: 'Teclado mecánico',  price: 89.99 },
-  { id: 2, name: 'Monitor 27 pulgadas', price: 349.99 },
-  { id: 3, name: 'Mouse inalámbrico', price: 29.99, outOfStock: true },
-  { id: 4, name: 'Webcam HD',         price: 59.99 },
-]
+const PASO: number = 18
 
 export default function App() {
   const content = /*

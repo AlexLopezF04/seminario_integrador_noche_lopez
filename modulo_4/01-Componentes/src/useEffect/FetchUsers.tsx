@@ -15,9 +15,11 @@ interface Props {
 }
 
 export default function FetchUser({ defaultUserId = 1 }: Props) {
-  const [users,    setUsers]    = useState<User | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error,   setError]   = useState<string | null>(null)
+  const [user,      setUser]      = useState<User | null>(null)
+  const [loading,   setLoading]   = useState(false)
+  const [error,     setError]     = useState<string | null>(null)
+  const [userId,    setUserId]    = useState(defaultUserId)
+  const [customId,  setCustomId]  = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -28,12 +30,12 @@ export default function FetchUser({ defaultUserId = 1 }: Props) {
 
       try {
         const res = await fetch(
-          `https://jsonplaceholder.typicode.com/users`
+          `https://jsonplaceholder.typicode.com/users/${userId}`
         )
         if (!res.ok) throw new Error(`Error HTTP ${res.status}`)
 
         const data: User = await res.json()
-        if (!cancelled) setUsers(data)
+        if (!cancelled) setUser(data)
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'Error desconocido')

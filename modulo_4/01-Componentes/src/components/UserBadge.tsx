@@ -1,39 +1,51 @@
 import { useAuth } from '../contexts/AuthContext'
 
 export default function UserBadge() {
-  const { username, logout } = useAuth()
+  const { state, logout } = useAuth()
+
+  if (!state.user) {
+    return (
+      <span style={{ fontSize: 13, color: '#9ca3af' }}>
+        No autenticado
+      </span>
+    )
+  }
+
+  const initials = state.user.name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
 
   return (
-    <div
-      style={{
-        padding: '12px 16px',
-        background: '#f0fdf4',
-        borderRadius: 8,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-      }}
-    >
-      <span>
-        Usuario: <strong>{username ?? 'Invitado'}</strong>
-      </span>
-      {username && (
-        <button
-          onClick={logout}
-          style={{
-            padding: '4px 12px',
-            background: '#e00',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: 'pointer',
-            fontSize: 12,
-            fontWeight: 600,
-          }}
-        >
-          Cerrar sesión
-        </button>
-      )}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{
+        width: 34, height: 34, borderRadius: '50%',
+        background: '#6366f1', color: '#fff',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontWeight: 700, fontSize: 13,
+      }}>
+        {initials}
+      </div>
+      <div>
+        <p style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>
+          {state.user.name}
+        </p>
+        <p style={{ margin: 0, fontSize: 12, color: '#9ca3af' }}>
+          {state.user.role}
+        </p>
+      </div>
+      <button
+        onClick={logout}
+        style={{
+          marginLeft: 8, padding: '4px 10px',
+          background: 'none', border: '1px solid #d1d5db',
+          borderRadius: 6, cursor: 'pointer',
+          fontSize: 12, color: '#6b7280',
+        }}
+      >
+        Salir
+      </button>
     </div>
   )
 }

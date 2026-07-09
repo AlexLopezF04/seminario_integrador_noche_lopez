@@ -1,71 +1,68 @@
 import { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth }  from '../contexts/AuthContext'
 
 export default function LoginForm() {
-  const [name, setName] = useState('')
-  const { username, login, logout } = useAuth()
+  const { state, login } = useAuth()
+  const [email,    setEmail]    = useState('')
+  const [password, setPassword] = useState('')
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (name.trim()) {
-      login(name.trim())
-      setName('')
-    }
-  }
-
-  if (username) {
-    return (
-      <div style={{ padding: '12px 16px', background: '#f0fdf4', borderRadius: 8 }}>
-        <p style={{ margin: '0 0 8px' }}>
-          Sesión iniciada como <strong>{username}</strong>
-        </p>
-        <button
-          onClick={logout}
-          style={{
-            padding: '6px 16px',
-            background: '#e00',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          Cerrar sesión
-        </button>
-      </div>
-    )
+    await login(email, password)
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8 }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 300 }}
+    >
       <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Nombre de usuario"
-        style={{
-          padding: '8px 12px',
-          border: '1px solid #d1d5db',
-          borderRadius: 6,
-          fontSize: 14,
-          flex: 1,
-        }}
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Correo electrónico"
+        disabled={state.isLoading}
+        style={inputStyle}
       />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Contraseña"
+        disabled={state.isLoading}
+        style={inputStyle}
+      />
+
+      {state.error && (
+        <p style={{ margin: 0, fontSize: 13, color: '#ef4444' }}>
+          {state.error}
+        </p>
+      )}
+
       <button
         type="submit"
-        disabled={!name.trim()}
+        disabled={state.isLoading || !email || !password}
         style={{
-          padding: '8px 20px',
-          background: name.trim() ? '#6366f1' : '#d1d5db',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 6,
-          cursor: name.trim() ? 'pointer' : 'not-allowed',
-          fontWeight: 600,
+          padding: '10px',
+          background: state.isLoading ? '#93c5fd' : '#0070f3',
+          color: '#fff', border: 'none', borderRadius: 6,
+          cursor: state.isLoading ? 'not-allowed' : 'pointer',
+          fontWeight: 500,
         }}
       >
-        Ingresar
+        {state.isLoading ? 'Entrando...' : 'Iniciar sesión'}
       </button>
+
+      <p style={{ margin: 0, fontSize: 12, color: '#9ca3af' }}>
+        Prueba con error@test.com para ver el manejo de errores
+      </p>
     </form>
   )
+}
+
+const inputStyle = {
+  padding: '8px 12px',
+  border: '1px solid #d1d5db',
+  borderRadius: 6,
+  fontSize: 14,
 }

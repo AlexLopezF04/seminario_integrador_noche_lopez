@@ -1,32 +1,34 @@
 import { useTheme } from '../contexts/ThemeContext'
-import ThemeToggle from './ThemeToggle'
-import UserBadge from './UserBadge'
+import { useAuth }  from '../contexts/AuthContext'
+import ThemeToggle  from './ThemeToggle'
+import UserBadge    from './UserBadge'
 
 export default function AppHeader() {
-  const { theme } = useTheme()
-
-  const bg = theme === 'light' ? '#f3f4f6' : '#111827'
-  const color = theme === 'light' ? '#111827' : '#f9fafb'
+  const { theme }        = useTheme()
+  const { state: auth }  = useAuth()
 
   return (
-    <div
-      style={{
-        background: bg,
-        color,
-        padding: 24,
-        borderRadius: 8,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16,
-        transition: 'all 0.2s',
-      }}
-    >
-      <h2 style={{ margin: 0, fontSize: 20 }}>AppHeader</h2>
-      <p style={{ margin: 0, fontSize: 14 }}>
-        Este componente usa <strong>ThemeContext</strong> y <strong>AuthContext</strong>
-      </p>
-      <ThemeToggle />
-      <UserBadge />
-    </div>
+    <header style={{
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      padding: '12px 24px',
+      background: theme === 'dark' ? '#111827' : '#fff',
+      borderBottom: '1px solid #e5e7eb',
+    }}>
+      <div>
+        <h1 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>
+          Mi App
+        </h1>
+        {auth.user && (
+          <p style={{ margin: 0, fontSize: 12, color: '#9ca3af' }}>
+            Panel de {auth.user.role}
+          </p>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <ThemeToggle />
+        <UserBadge />
+      </div>
+    </header>
   )
 }

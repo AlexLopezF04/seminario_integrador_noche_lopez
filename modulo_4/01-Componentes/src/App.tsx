@@ -131,7 +131,7 @@ const cartProducts = [
 
 interface CartItem { id: number; name: string; price: number }
 
-const PASO: number = 34
+const PASO: number = 38
 
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])

@@ -1,73 +1,92 @@
 import { useState, useMemo } from 'react'
 
-function calculatePrimes(limit: number): number[] {
-  const primes: number[] = []
-  for (let n = 2; n <= limit; n++) {
-    let isPrime = true
-    for (let d = 2; d * d <= n; d++) {
-      if (n % d === 0) { isPrime = false; break }
+function sieve(n: number): number[] {
+  if (n < 2) return []
+  const isPrime = new Array(n + 1).fill(true)
+  isPrime[0] = isPrime[1] = false
+  for (let i = 2; i * i <= n; i++) {
+    if (isPrime[i]) {
+      for (let j = i * i; j <= n; j += i) isPrime[j] = false
     }
-    if (isPrime) primes.push(n)
   }
-  return primes
+  return isPrime.reduce<number[]>((acc, ok, i) => (ok ? [...acc, i] : acc), [])
 }
 
 export default function PrimeSieve() {
-  const [limit, setLimit] = useState(100)
+  const [limit,   setLimit]   = useState(10_000)
+  const [counter, setCounter] = useState(0)
 
-  const { primes, elapsed } = useMemo(() => {
-    const start = performance.now()
-    const result = calculatePrimes(limit)
-    return { primes: result, elapsed: (performance.now() - start).toFixed(2) }
-  }, [limit])
+  const primes = useMemo(() => sieve(limit), [limit])
 
   return (
-    <div style={{ maxWidth: 400 }}>
-      <label style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-        <span style={{ fontSize: 14 }}>Límite superior:</span>
-        <input
-          type="number"
-          value={limit}
-          onChange={(e) => setLimit(Math.max(2, Number(e.target.value)))}
-          min={2}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            fontSize: 14,
-          }}
-        />
-      </label>
-      <p style={{ fontSize: 13, color: '#6b7280' }}>
-        {primes.length} primos encontrados (en {elapsed}ms)
+    <div style={{ fontFamily: 'sans-serif', maxWidth: 520, margin: '0 auto', padding: 24 }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>PrimeSieve</h2>
+      <p style={{ color: '#666', fontSize: 14, marginBottom: 20 }}>
+        El contador provoca re-renders — el cribado solo recorre cuando cambia el límite.
       </p>
-      <div
-        style={{
-          maxHeight: 200,
-          overflowY: 'auto',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 4,
-          padding: 8,
-          background: '#f9fafb',
-          borderRadius: 6,
-        }}
-      >
-        {primes.map((p) => (
-          <span
-            key={p}
-            style={{
-              padding: '2px 8px',
-              background: '#6366f1',
-              color: '#fff',
-              borderRadius: 4,
-              fontSize: 12,
-            }}
-          >
-            {p}
-          </span>
+
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 14 }}>
+          Límite (N)
+          <input
+            type="range"
+            min={1000}
+            max={100_000}
+            step={1000}
+            value={limit}
+            onChange={e => setLimit(Number(e.target.value))}
+            style={{ width: 200 }}
+          />
+          <span>{limit.toLocaleString()}</span>
+        </label>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 14 }}>
+          Counter (trigger re-renders)
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              onClick={() => setCounter(c => c - 1)}
+              style={{ padding: '4px 12px', cursor: 'pointer' }}
+            >−</button>
+            <span style={{ minWidth: 32, textAlign: 'center' }}>{counter}</span>
+            <button
+              onClick={() => setCounter(c => c + 1)}
+              style={{ padding: '4px 12px', cursor: 'pointer' }}
+            >+</button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        display:      'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap:          12,
+        marginBottom: 20,
+      }}>
+        {[
+          { label: 'Primos encontrados', value: primes.length.toLocaleString() },
+          { label: 'Límite',             value: limit.toLocaleString() },
+          { label: 'Mayor primo',        value: (primes.at(-1) ?? 0).toLocaleString() },
+        ].map(({ label, value }) => (
+          <div key={label} style={{
+            padding:    12,
+            background: '#f5f5f5',
+            borderRadius: 8,
+            fontSize:   13,
+          }}>
+            <div style={{ color: '#888', marginBottom: 4 }}>{label}</div>
+            <div style={{ fontWeight: 700, fontSize: 18 }}>{value}</div>
+          </div>
         ))}
       </div>
+
+      <details style={{ fontSize: 13 }}>
+        <summary style={{ cursor: 'pointer', color: '#555' }}>
+          Primeros 20 primos
+        </summary>
+        <div style={{ marginTop: 8, color: '#333', lineHeight: 1.8 }}>
+          {primes.slice(0, 20).join(', ')}
+        </div>
+      </details>
     </div>
   )
 }

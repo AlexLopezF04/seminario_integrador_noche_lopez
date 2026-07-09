@@ -1,98 +1,123 @@
 import { useState, useCallback, memo } from 'react'
 
-interface ListItemProps {
-  item: string
-  onRemove: (item: string) => void
+interface Task {
+  id:        number
+  text:      string
+  completed: boolean
 }
 
-const ListItem = memo(function ListItem({ item, onRemove }: ListItemProps) {
+const INITIAL_TASKS: Task[] = [
+  { id: 1, text: 'Diseñar la interfaz',    completed: false },
+  { id: 2, text: 'Implementar los hooks',  completed: true  },
+  { id: 3, text: 'Escribir los tests',     completed: false },
+  { id: 4, text: 'Revisar accesibilidad',  completed: false },
+  { id: 5, text: 'Deploy en producción',   completed: false },
+]
+
+let rowRenderCount = 0
+
+const TaskRow = memo(function TaskRow({
+  task,
+  onToggle,
+  onDelete,
+}: {
+  task:     Task
+  onToggle: (id: number) => void
+  onDelete: (id: number) => void
+}) {
+  rowRenderCount++
+  const count = rowRenderCount
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '8px 12px',
-        background: '#f9fafb',
-        borderRadius: 6,
-        fontSize: 14,
-      }}
-    >
-      <span>{item}</span>
+    <div style={{
+      display:        'flex',
+      alignItems:     'center',
+      gap:            10,
+      padding:        '10px 14px',
+      background:     task.completed ? '#f0fdf4' : '#fafafa',
+      borderRadius:   8,
+      border:         '1px solid',
+      borderColor:    task.completed ? '#86efac' : '#e5e5e5',
+    }}>
+      <input
+        type="checkbox"
+        checked={task.completed}
+        onChange={() => onToggle(task.id)}
+        style={{ cursor: 'pointer', width: 16, height: 16 }}
+      />
+      <span style={{
+        flex:           1,
+        fontSize:       14,
+        textDecoration: task.completed ? 'line-through' : 'none',
+        color:          task.completed ? '#666' : '#111',
+      }}>
+        {task.text}
+      </span>
+      <span style={{ fontSize: 11, color: '#aaa' }}>render #{count}</span>
       <button
-        onClick={() => onRemove(item)}
+        onClick={() => onDelete(task.id)}
         style={{
-          padding: '4px 10px',
-          background: '#e00',
-          color: '#fff',
-          border: 'none',
+          padding:      '2px 8px',
           borderRadius: 4,
-          cursor: 'pointer',
-          fontSize: 12,
-          fontWeight: 600,
+          border:       '1px solid #fca5a5',
+          background:   '#fef2f2',
+          color:        '#dc2626',
+          cursor:       'pointer',
+          fontSize:     12,
         }}
       >
-        Quitar
+        ✕
       </button>
     </div>
   )
 })
 
-const initialItems = ['Manzana', 'Banana', 'Naranja', 'Uva']
-
 export default function MemoizedList() {
-  const [items, setItems] = useState(initialItems)
-  const [newItem, setNewItem] = useState('')
+  const [tasks,   setTasks]   = useState<Task[]>(INITIAL_TASKS)
+  const [counter, setCounter] = useState(0)
 
-  const handleRemove = useCallback((item: string) => {
-    setItems((prev) => prev.filter((i) => i !== item))
+  const handleToggle = useCallback((id: number) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t))
   }, [])
 
-  function handleAdd() {
-    if (!newItem.trim()) return
-    setItems((prev) => [...prev, newItem.trim()])
-    setNewItem('')
-  }
+  const handleDelete = useCallback((id: number) => {
+    setTasks(prev => prev.filter(t => t.id !== id))
+  }, [])
 
   return (
-    <div style={{ maxWidth: 380 }}>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <input
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-          placeholder="Nuevo item"
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            fontSize: 14,
-          }}
-        />
-        <button
-          onClick={handleAdd}
-          style={{
-            padding: '8px 20px',
-            background: '#22c55e',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          Agregar
-        </button>
-      </div>
-      <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>
-        {items.length} item{items.length !== 1 ? 's' : ''}
+    <div style={{ fontFamily: 'sans-serif', maxWidth: 520, margin: '0 auto', padding: 24 }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>MemoizedList</h2>
+      <p style={{ color: '#666', fontSize: 14, marginBottom: 20 }}>
+        <code>React.memo</code> + <code>useCallback</code> — las filas no re-renderizan por un counter ajeno.
       </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {items.map((item, idx) => (
-          <ListItem key={`${item}-${idx}`} item={item} onRemove={handleRemove} />
+
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 20 }}>
+        <button
+          onClick={() => setCounter(c => c + 1)}
+          style={{ padding: '6px 16px', borderRadius: 6, border: '1px solid #ccc', cursor: 'pointer' }}
+        >
+          Incrementar counter ({counter})
+        </button>
+        <span style={{ fontSize: 13, color: '#888' }}>
+          ← no debe re-renderizar las filas
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {tasks.map(task => (
+          <TaskRow
+            key={task.id}
+            task={task}
+            onToggle={handleToggle}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
+
+      <p style={{ marginTop: 16, fontSize: 12, color: '#aaa' }}>
+        Render total de filas: {rowRenderCount}
+        {' '}(debería crecer solo al hacer toggle o delete, no al pulsar el counter)
+      </p>
     </div>
   )
 }

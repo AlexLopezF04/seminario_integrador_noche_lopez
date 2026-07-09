@@ -1,95 +1,137 @@
 import { useState, useCallback, useEffect } from 'react'
 
-interface Post {
-  id: number
-  title: string
+interface User {
+  id:       number
+  name:     string
+  email:    string
+  username: string
 }
 
-export default function PaginatedFetch() {
-  const [page, setPage] = useState(1)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(false)
+const PAGE_SIZE = 5
 
-  const fetchPage = useCallback(async (pageNum: number) => {
+export default function PaginatedFetch() {
+  const [page,    setPage]    = useState(1)
+  const [users,   setUsers]   = useState<User[]>([])
+  const [total,   setTotal]   = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState<string | null>(null)
+
+  const fetchPage = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
-      const res = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?_page=${pageNum}&_limit=5`
+      const start = (page - 1) * PAGE_SIZE
+      const res   = await fetch(
+        `https://jsonplaceholder.typicode.com/users?_start=${start}&_limit=${PAGE_SIZE}`
       )
-      const data: Post[] = await res.json()
-      setPosts(data)
-    } catch {
-      setPosts([])
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const totalCount = Number(res.headers.get('x-total-count') ?? 10)
+      const data: User[] = await res.json()
+      setUsers(data)
+      setTotal(totalCount)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [page])
 
-  useEffect(() => {
-    fetchPage(page)
-  }, [page, fetchPage])
+  useEffect(() => { fetchPage() }, [fetchPage])
 
-  const handlePrev = useCallback(() => {
-    setPage((p) => Math.max(1, p - 1))
-  }, [])
-
-  const handleNext = useCallback(() => {
-    setPage((p) => p + 1)
-  }, [])
+  const totalPages = Math.ceil(total / PAGE_SIZE) || 1
 
   return (
-    <div style={{ maxWidth: 420 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-        <button
-          onClick={handlePrev}
-          disabled={page === 1}
-          style={{
-            padding: '8px 16px',
-            background: page === 1 ? '#d1d5db' : '#6366f1',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: page === 1 ? 'not-allowed' : 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          ← Anterior
-        </button>
-        <span style={{ fontSize: 14, fontWeight: 600 }}>Página {page}</span>
-        <button
-          onClick={handleNext}
-          disabled={posts.length < 5}
-          style={{
-            padding: '8px 16px',
-            background: posts.length < 5 ? '#d1d5db' : '#6366f1',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            cursor: posts.length < 5 ? 'not-allowed' : 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          Siguiente →
-        </button>
-      </div>
+    <div style={{ fontFamily: 'sans-serif', maxWidth: 540, margin: '0 auto', padding: 24 }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>PaginatedFetch</h2>
+      <p style={{ color: '#666', fontSize: 14, marginBottom: 20 }}>
+        <code>useCallback</code> con <code>[page]</code> como dep — fetch al cambiar de página.
+      </p>
 
-      {loading && <p style={{ fontSize: 13, color: '#6b7280' }}>Cargando...</p>}
+      {error && (
+        <div style={{
+          padding:    12,
+          background: '#fef2f2',
+          border:     '1px solid #fca5a5',
+          borderRadius: 8,
+          color:      '#dc2626',
+          marginBottom: 16,
+          fontSize:   14,
+        }}>
+          {error}
+        </div>
+      )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {posts.map((post) => (
-          <div
-            key={post.id}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: 32, color: '#aaa' }}>Cargando…</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+          {users.map(u => (
+            <div key={u.id} style={{
+              display:        'flex',
+              justifyContent: 'space-between',
+              alignItems:     'center',
+              padding:        '10px 14px',
+              background:     '#f9f9f9',
+              borderRadius:   8,
+              border:         '1px solid #eee',
+            }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{u.name}</div>
+                <div style={{ fontSize: 12, color: '#888' }}>@{u.username}</div>
+              </div>
+              <div style={{ fontSize: 13, color: '#555' }}>{u.email}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
+        <button
+          onClick={() => setPage(1)}
+          disabled={page === 1 || loading}
+          style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #ddd', cursor: 'pointer' }}
+        >«</button>
+        <button
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1 || loading}
+          style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #ddd', cursor: 'pointer' }}
+        >‹</button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            disabled={loading}
             style={{
-              padding: '10px 12px',
-              background: '#f9fafb',
+              padding:    '5px 12px',
               borderRadius: 6,
-              fontSize: 14,
+              border:     '1px solid',
+              borderColor: p === page ? '#0070f3' : '#ddd',
+              background:  p === page ? '#0070f3' : 'white',
+              color:       p === page ? 'white'    : '#333',
+              cursor:      'pointer',
+              fontWeight:  p === page ? 700 : 400,
             }}
           >
-            {post.id}. {post.title}
-          </div>
+            {p}
+          </button>
         ))}
+
+        <button
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages || loading}
+          style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #ddd', cursor: 'pointer' }}
+        >›</button>
+        <button
+          onClick={() => setPage(totalPages)}
+          disabled={page === totalPages || loading}
+          style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #ddd', cursor: 'pointer' }}
+        >»</button>
       </div>
+
+      <p style={{ textAlign: 'center', fontSize: 12, color: '#aaa', marginTop: 10 }}>
+        Página {page} de {totalPages} · {total} usuarios en total
+      </p>
     </div>
   )
 }

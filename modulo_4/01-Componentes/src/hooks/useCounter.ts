@@ -1,17 +1,41 @@
 import { useState, useCallback } from 'react'
 
-export function useCounter(initial = 0, min?: number, max?: number) {
-  const [count, setCount] = useState(initial)
+interface UseCounterOptions {
+  initialValue?: number
+  min?:          number
+  max?:          number
+  step?:         number
+}
 
-  const increment = useCallback(() => {
-    setCount((c) => (max !== undefined ? Math.min(c + 1, max) : c + 1))
-  }, [max])
+interface UseCounterReturn {
+  count:     number
+  increment: () => void
+  decrement: () => void
+  reset:     () => void
+  set:       (value: number) => void
+}
 
-  const decrement = useCallback(() => {
-    setCount((c) => (min !== undefined ? Math.max(c - 1, min) : c - 1))
-  }, [min])
+export function useCounter({
+  initialValue = 0,
+  min          = -Infinity,
+  max          = Infinity,
+  step         = 1,
+}: UseCounterOptions = {}): UseCounterReturn {
+  const [count, setCount] = useState(initialValue)
 
-  const reset = useCallback(() => setCount(initial), [initial])
+  const increment = useCallback(
+    () => setCount((prev) => Math.min(prev + step, max)),
+    [step, max]
+  )
+  const decrement = useCallback(
+    () => setCount((prev) => Math.max(prev - step, min)),
+    [step, min]
+  )
+  const reset = useCallback(() => setCount(initialValue), [initialValue])
+  const set   = useCallback(
+    (value: number) => setCount(Math.min(Math.max(value, min), max)),
+    [min, max]
+  )
 
-  return { count, increment, decrement, reset, setCount }
+  return { count, increment, decrement, reset, set }
 }

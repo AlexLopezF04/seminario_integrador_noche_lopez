@@ -131,7 +131,13 @@ const cartProducts = [
 
 interface CartItem { id: number; name: string; price: number }
 
-const PASO: number = 42
+const EXAMPLE_CODE = `export function useToggle(initial = false) {
+  const [value, setValue] = useState(initial)
+  const toggle = useCallback(() => setValue(v => !v), [])
+  return { value, toggle }
+}`
+
+const PASO: number = 46
 
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -290,7 +296,7 @@ export default function App() {
     PASO === 49 ? <LiveSearch /> :
     PASO === 50 ? <PostList /> :
     PASO === 51 ? <ResponsiveLayout /> :
-    PASO === 52 ? <CodeBlock /> :
+    PASO === 52 ? <CodeBlock code={EXAMPLE_CODE} language="tsx" /> :
 
     <p style={{ color: '#e00' }}>Paso {PASO}: crea el componente primero</p>
 

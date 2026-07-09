@@ -1,17 +1,22 @@
 import { useState, useCallback } from 'react'
 
-export function useClipboard() {
+interface UseClipboardReturn {
+  copy:   (text: string) => Promise<void>
+  copied: boolean
+}
+
+export function useClipboard(resetDelay = 2000): UseClipboardReturn {
   const [copied, setCopied] = useState(false)
 
   const copy = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), resetDelay)
     } catch {
-      setCopied(false)
+      console.warn('useClipboard: no se pudo copiar al portapapeles')
     }
-  }, [])
+  }, [resetDelay])
 
-  return { copied, copy }
+  return { copy, copied }
 }

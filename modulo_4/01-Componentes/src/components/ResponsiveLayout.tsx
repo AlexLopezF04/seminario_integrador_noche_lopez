@@ -2,48 +2,37 @@ import { useMediaQuery } from '../hooks/useMediaQuery'
 import { useWindowSize } from '../hooks/useWindowSize'
 
 export default function ResponsiveLayout() {
+  const isMobile  = useMediaQuery('(max-width: 768px)')
+  const isTablet  = useMediaQuery('(max-width: 1024px)')
   const { width } = useWindowSize()
-  const isMobile = useMediaQuery('(max-width: 480px)')
-  const isTablet = useMediaQuery('(min-width: 481px) and (max-width: 768px)')
-  const isDesktop = useMediaQuery('(min-width: 769px)')
-
-  let deviceLabel = 'Desktop'
-  let deviceColor = '#6366f1'
-  if (isMobile) { deviceLabel = 'Móvil'; deviceColor = '#22c55e' }
-  else if (isTablet) { deviceLabel = 'Tablet'; deviceColor = '#f59e0b' }
 
   return (
-    <div style={{ maxWidth: 500 }}>
-      <div
-        style={{
-          padding: 20,
-          background: '#f9fafb',
-          borderRadius: 8,
-          marginBottom: 16,
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Ancho de ventana</div>
-        <div style={{ fontSize: 36, fontWeight: 700 }}>{width}px</div>
+    <div style={{
+      padding: isMobile ? 12 : 24,
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1fr 1fr 1fr',
+      gap: 12,
+    }}>
+      <div style={{ padding: 16, background: '#f9fafb', borderRadius: 8 }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>Vista actual</p>
+        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6b7280' }}>
+          {isMobile ? 'Móvil' : isTablet ? 'Tablet' : 'Escritorio'} — {width}px
+        </p>
       </div>
-
-      <div
-        style={{
-          padding: 20,
-          background: deviceColor,
-          color: '#fff',
-          borderRadius: 8,
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ fontSize: 12, opacity: 0.8, marginBottom: 4 }}>Dispositivo detectado</div>
-        <div style={{ fontSize: 24, fontWeight: 700 }}>{deviceLabel}</div>
-        <div style={{ fontSize: 12, opacity: 0.8, marginTop: 8 }}>
-          {isMobile && 'max-width: 480px'}
-          {isTablet && '481px – 768px'}
-          {isDesktop && 'min-width: 769px'}
+      <div style={{ padding: 16, background: '#f9fafb', borderRadius: 8 }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>Columnas</p>
+        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6b7280' }}>
+          {isMobile ? 1 : isTablet ? 2 : 3}
+        </p>
+      </div>
+      {!isMobile && (
+        <div style={{ padding: 16, background: '#f9fafb', borderRadius: 8 }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>Extra</p>
+          <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6b7280' }}>
+            Solo visible en tablet/escritorio
+          </p>
         </div>
-      </div>
+      )}
     </div>
   )
 }

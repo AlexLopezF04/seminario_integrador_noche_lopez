@@ -1,30 +1,22 @@
-import { useState, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 
-export function useLocalStorage<T>(key: string, defaultValue: T) {
-  const [value, setValue] = useState<T>(() => {
+export function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const stored = localStorage.getItem(key)
-      return stored !== null ? (JSON.parse(stored) as T) : defaultValue
+      const item = localStorage.getItem(key)
+      return item ? (JSON.parse(item) as T) : initialValue
     } catch {
-      return defaultValue
+      return initialValue
     }
   })
 
-  const set = useCallback(
-    (newValue: T | ((prev: T) => T)) => {
-      setValue((prev) => {
-        const resolved = typeof newValue === 'function' ? (newValue as (prev: T) => T)(prev) : newValue
-        localStorage.setItem(key, JSON.stringify(resolved))
-        return resolved
-      })
-    },
-    [key]
-  )
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(storedValue))
+    } catch {
+      console.warn(`useLocalStorage: no se pudo guardar "${key}"`)
+    }
+  }, [key, storedValue])
 
-  const remove = useCallback(() => {
-    localStorage.removeItem(key)
-    setValue(defaultValue)
-  }, [key, defaultValue])
-
-  return { value, set, remove }
+  return [storedValue, setStoredValue] as const
 }

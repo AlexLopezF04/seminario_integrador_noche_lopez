@@ -1,45 +1,37 @@
 import { useCounter } from '../hooks/useCounter'
 
 export default function QuantitySelector() {
-  const { count, increment, decrement, reset } = useCounter(1, 1, 10)
+  const { count, increment, decrement, reset } = useCounter({
+    initialValue: 1, min: 1, max: 99,
+  })
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 12 }}>
-        Cantidad (mín: 1, máx: 10)
-      </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center' }}>
-        <button onClick={decrement} style={btnStyle('#e00')}>−</button>
-        <span style={{ fontSize: 28, fontWeight: 700, minWidth: 40 }}>{count}</span>
-        <button onClick={increment} style={btnStyle('#22c55e')}>+</button>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <button
-        onClick={reset}
-        style={{
-          ...btnStyle('#6b7280'),
-          marginTop: 12,
-        }}
+        onClick={decrement}
+        disabled={count === 1}
+        style={qBtn}
       >
+        −
+      </button>
+      <span style={{ minWidth: 32, textAlign: 'center', fontWeight: 600 }}>
+        {count}
+      </span>
+      <button
+        onClick={increment}
+        disabled={count === 99}
+        style={qBtn}
+      >
+        +
+      </button>
+      <button onClick={reset} style={{ ...qBtn, fontSize: 11, color: '#9ca3af' }}>
         Reset
       </button>
     </div>
   )
 }
 
-function btnStyle(color: string): React.CSSProperties {
-  return {
-    padding: '8px 16px',
-    background: color,
-    color: '#fff',
-    border: 'none',
-    borderRadius: 6,
-    cursor: 'pointer',
-    fontSize: 18,
-    fontWeight: 700,
-    width: 44,
-    height: 44,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+const qBtn: React.CSSProperties = {
+  width: 30, height: 30, border: '1px solid #d1d5db',
+  borderRadius: 6, background: '#f9fafb', cursor: 'pointer',
 }

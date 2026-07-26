@@ -26,7 +26,10 @@ type SinValor = string & number;
 
 type TipoCurso = "grabado" | "en-vivo" | "mixto";
 
-const tipoCurso: TipoCurso = "grabado";
+function obtenerTipoCurso(): TipoCurso {
+  return "grabado";
+}
+const tipoCurso: TipoCurso = obtenerTipoCurso();
 const duracionTotal: number = 40;
 let areaCurso: number;
 

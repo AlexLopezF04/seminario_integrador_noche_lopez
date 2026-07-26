@@ -41,7 +41,7 @@
  * Aplicado a cursos online: calcular precio de curso.
  */
 
-function calcularPrecioCursoJS(precio, descuento) {
+function calcularPrecioCursoJS(precio: any, descuento: any) {
   return precio - precio * (descuento / 100);
 }
 
@@ -58,7 +58,7 @@ console.log("TS precio curso:", calcularPrecioCursoTS(250, 10)); // 225
 
 // --- Ejemplo del bug REAL con el operador + ---
 
-function calcularTotalCursoJS(precio, impuesto) {
+function calcularTotalCursoJS(precio: any, impuesto: any) {
   return precio + precio * (impuesto / 100);
 }
 

@@ -11,7 +11,7 @@
  * ============================================
  */
 
-let contenidoCurso: string | number = "Video Introduccion";
+let contenidoCurso: string | number = Math.random() > 0.5 ? "Video Introduccion" : 42;
 let resultado: string;
 if (typeof contenidoCurso === "string") {
   resultado = contenidoCurso.toUpperCase();

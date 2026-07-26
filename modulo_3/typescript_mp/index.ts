@@ -3,7 +3,6 @@
  * MODULO 3 - FUNDAMENTOS DE TYPESCRIPT
  * Tema: Cursos Online
  * ============================================
- * Tutorial del profesor Francisco Higuera
  *
  * Archivos de contenido (_mp = modulo proyecto):
  *   01_introduccion_typescript_mp.ts   -> Que es TS, entorno, strict mode
